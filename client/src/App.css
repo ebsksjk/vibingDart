@@ -1,0 +1,135 @@
+/* Add this to your stylesheet */
+.dart-counter-server, .dart-counter-client {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.player-score {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+  min-width: 200px;
+}
+
+.current-score {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.score-history span {
+  display: inline-block;
+  margin: 5px;
+  padding: 5px;
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+input[type="number"] {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+  width: 100px;
+}
+
+button {
+  padding: 10px 15px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  background: #cccccc;
+}
+
+.winner-message {
+  background: #ffeb3b;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.server-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.connection-info {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.info-grid {
+  margin: 15px 0;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.info-label {
+  font-weight: bold;
+  min-width: 100px;
+}
+
+.info-value {
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.connection-help {
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Add to your existing styles */
+.connection-details {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.qr-code-container {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: white;
+}
+
+.qr-instructions {
+  margin-top: 8px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .connection-details {
+    flex-direction: column;
+  }
+  
+  .qr-code-container {
+    margin-top: 15px;
+  }
+}
