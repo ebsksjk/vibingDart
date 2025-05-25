@@ -2,6 +2,46 @@ import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
 const DartCounterClient = () => {
+
+    const [networkInfo, setNetworkInfo] = useState({
+      ip: 'detecting...',
+      port: '',
+      connectionUrl: ''
+    });
+
+  useEffect(() => {
+  const fetchNetworkInfo = async () => {
+    if(networkInfo.ip === 'detecting...'){
+    try {
+      // Use full URL in development if proxy isn't working
+      const backendUrl = process.env.NODE_ENV === 'development' 
+        ? '/network-info' 
+        : '/network-info';
+      
+      const response = await fetch(backendUrl);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Network info received:', data);  // Debug log
+      setNetworkInfo(data);
+      console.log("Network info: ", networkInfo);
+    } catch (error) {
+      console.error("Couldn't fetch network info:", error);
+      setNetworkInfo({
+        ip: 'localhost',
+        port: 3000,
+        connectionUrl: 'http://localhost:3000/client'  // Added /client path
+      });
+    }
+  }
+  };
+
+  fetchNetworkInfo();
+}, [networkInfo]);
+
   const [player, setPlayer] = useState({ 
     id: `player_${Date.now()}`, 
     name: '', 
@@ -16,43 +56,24 @@ const DartCounterClient = () => {
   const namePrompted = useRef(false);
 
 
-  const [networkInfo, setNetworkInfo] = useState({
-      ip: 'detecting...',
-      port: '',
-      connectionUrl: ''
-    });
+
 
   useEffect(() => {
-      // Fetch network info from server
-      const fetchNetworkInfo = async () => {
-        try {
-          const response = await fetch('/network-info');
-          const data = await response.json();
-          setNetworkInfo(data);
-        } catch (error) {
-          console.error("Couldn't fetch network info:", error);
-          setNetworkInfo({
-            ip: 'localhost',
-            port: 3000,
-            connectionUrl: 'http://localhost:3000'
-          });
-        }
-      };
-  
-      fetchNetworkInfo();
-    }, []);
+  console.log('NetworkInfo state updated:', networkInfo);
+}, [networkInfo]);
 
   useEffect(() => {
     // Only prompt for name once
     if (!player.name && !namePrompted.current) {
       namePrompted.current = true;
-      const playerName = prompt('Enter your name') || `Player_${Math.floor(Math.random() * 1000)}`;
+      const playerName = prompt('Bitte Spielernamen eingeben: ') || `Player_${Math.floor(Math.random() * 1000)}`;
       setPlayer(p => ({ ...p, name: playerName }));
       return;
     }
 
     // Initialize socket only when we have a name but no socket
-    if (player.name && !socketRef.current) {
+    if (player.name && !socketRef.current && networkInfo.ip !== 'detecting...') {
+      console.log('trying to connect to socket @ http://' + networkInfo.ip + ':3001');
       const newSocket = io('http://' + networkInfo.ip + ':3001', {
         reconnection: true,
         reconnectionAttempts: 5,
@@ -108,7 +129,14 @@ const DartCounterClient = () => {
     e.preventDefault();
     if (!inputScore || isNaN(inputScore)) return;
     
-    const score = parseInt(inputScore);
+    let score = parseInt(inputScore);
+    if(score < 0) return; //do not input negatives
+    //hier auch logik für nur mit double auuswerfen - irgendwann
+    if(player.score - score < 0){
+      alert("Überworfen!");
+      score = 0;
+    }
+
     if (socketRef.current) {
       socketRef.current.emit('submitScore', { 
         playerId: player.id, 
@@ -122,8 +150,8 @@ const DartCounterClient = () => {
   if (winner) {
     return (
       <div className="dart-counter-client">
-        <h1>{winner.name} wins the game!</h1>
-        <p>Waiting for server to start a new game...</p>
+        <h1>{winner.name} gewinnt den Leg!</h1>
+        <p>Warte, bis ein neues Spiel gestartet wird...</p>
       </div>
     );
   }
@@ -131,8 +159,8 @@ const DartCounterClient = () => {
   if (!gameStarted) {
     return (
       <div className="dart-counter-client">
-        <h1>Welcome {player.name}!</h1>
-        <p>Waiting for game to start...</p>
+        <h1>Willkommen, {player.name}!</h1>
+        <p>Warten auf Spielstart...</p>
       </div>
     );
   }
@@ -140,22 +168,24 @@ const DartCounterClient = () => {
   return (
     <div className="dart-counter-client">
       <h1>{player.name}</h1>
-      <h2>Current Score: {player.score}</h2>
-      <h3>Game: {gameType}</h3>
+      <h2>Score: {player.score}</h2>
+      <h3>Spieltyp: {gameType}</h3>
       
       <form onSubmit={handleScoreSubmit}>
         <input
           type="number"
           value={inputScore}
           onChange={(e) => setInputScore(e.target.value)}
-          placeholder="Enter your score"
+          placeholder="Wurf eintragen"
           autoFocus
         />
-        <button type="submit">Submit</button>
+        <button type="submit">Eintragen!</button>
       </form>
       
       <div className="score-history">
-        <h4>Last throws:</h4>
+        <h4>Letzte Würfe (Durchschnitt: {player.history.reduce((accumulator, currentValue) => {
+  return accumulator + currentValue
+},0)/player.history.length}):</h4>
         {player.history.slice().reverse().map((score, index) => (
           <div key={index}>{score}</div>
         ))}

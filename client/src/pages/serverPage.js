@@ -31,13 +31,13 @@ function ServerPage() {
 
   return (
     <div className="server-page">
-      <h1>Dart Counter - Server Display</h1>
+      <h1>Count Dart - Hauptdisplay</h1>
       
       <div className="connection-info">
-        <h3>Server Connection Info:</h3>
+        <h3>Verbindungsinformationen:</h3>
         <div className="info-grid">
           <div className="info-row">
-            <span className="info-label">Local IP:</span>
+            <span className="info-label">Lokale IP:</span>
             <span className="info-value">{networkInfo.ip}</span>
           </div>
           <div className="info-row">
@@ -63,15 +63,15 @@ function ServerPage() {
   includeMargin={true}
   fgColor="#2c3e50"
 />
-                <p className="qr-instructions">Scan to connect mobile device</p>
+                <p className="qr-instructions">Scannen, um mit Handy beizutreten</p>
               </>
             )}
           </div>
         </div>
         
         <div className="connection-help">
-          <p>Mobile devices should connect to this server via the URL above.</p>
-          <p>Ensure devices are on the same WiFi network.</p>
+          <p>Mobile Geräte sollten sich über die oben genannte URL verbinden.</p>
+          <p>Alle Geräte müssen im selben Netzwerk sein.</p>
         </div>
       </div>
 

@@ -70,11 +70,11 @@ const DartCounterServer = () => {
             </select>
           </div>
           <button onClick={startGame} disabled={players.length === 0}>
-            Start Game ({players.length} players connected)
+            Spiel starten ({players.length} Spieler angemeldet)
           </button>
           
           <div className="connected-players">
-            <h3>Connected Players:</h3>
+            <h3>Angemeldete Spieler:</h3>
             <ul>
               {players.map((player, index) => (
                 <li key={index}>{player.name} (ID: {player.id})</li>
@@ -86,13 +86,13 @@ const DartCounterServer = () => {
         <div className="game-phase">
           {winner ? (
             <div className="winner-message">
-              <h2>Game Over! {winner.name} wins!</h2>
-              <button onClick={resetGame}>New Game</button>
+              <h2>Leg vorbei! {winner.name} gewinnt!</h2>
+              <button onClick={resetGame}>Neues Leg</button>
             </div>
           ) : (
             <>
-              <h2>Game: {gameType}</h2>
-              <button onClick={resetGame}>Reset Game</button>
+              <h2>Spiel: {gameType}</h2>
+              <button onClick={resetGame}>Spiel neustarten</button>
               
               <div className="scoreboard">
                 {players.map((player, index) => (
